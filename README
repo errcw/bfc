@@ -1,0 +1,54 @@
+bfc
+===
+
+About
+-----
+
+I wrote a brainfuck to x86/Linux assembly compiler, bfc, in Python. Brainfuck
+is an esoteric language that, though extraordinarily minimal, manages to be
+Turing complete. Bfc comes in two parts: a command-line interface and the
+actual compiler. The compiler, like the language, is rather simple. It has
+assembly templates for each brainfuck instruction that it concatenates then
+inserts into a larger program template. Currently it performs no optimizations
+but it could conceivably fold the various increment and decrement instructions
+into a single assembly instruction.
+
+Examples
+--------
+
+For fun, here are a few examples of brainfuck doing moderately useful things:
+
+cat: pipes input to output
+,[.,]
+
+hello world: prints 'Hello World!\n' (from Wikipedia)
+++++++++++                set cell zero to 10
+[
+   >+++++++>++++++++++>+++>+<<<<-
+]                         loop to set the next four cells to 70,100,30,10 
+>++.                      'H'
+>+.                       'e'
++++++++.                  'l'
+.                         'l'
++++.                      'o'
+>++.                      space
+<<+++++++++++++++.        'W'
+>.                        'o'
++++.                      'r'
+------.                   'l'
+--------.                 'd'
+>+.                       '!'
+>.                        newline
+
+add: adds two single-digit numbers (from Wikipedia)
+,>++++++[<-------->-],[<+>-]<.
+
+Usage
+-----
+
+To transform a Brainfuck file (e.g., cat) into a working program:
+> echo ,[.,] > mycat.bf
+> python bfc.py -o mycat.s mycat.bf
+> as -o mycat.o mycat.s
+> ld -s -o mycat mycat.o
+> ./mycat
